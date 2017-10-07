@@ -40,6 +40,14 @@
 
   // Prepare the form.
   $(document).ready(function() {
+    loadStripeBillingBlock();
+  });
+
+  CRM.$('input[name="payment_processor_id"]').change(function() {
+    loadStripeBillingBlock();
+  });
+
+  function loadStripeBillingBlock() {
     Stripe.setPublishableKey($('#stripe-pub-key').val());
 
     // Check for form marked as a stripe-payment-form by the server.
@@ -223,7 +231,7 @@
       debugging('debug: ywkvh (Getting Stripe token)');
       return false;
     });
-  });
+  }
 }(cj, CRM));
 
 function debugging (errorCode) {
