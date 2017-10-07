@@ -5,14 +5,15 @@
   <description>Stripe Payment Processor</description>
   <urls>
     <url desc="Main Extension Page">http://drastikbydesign.com</url>
+    <url desc="Support">https://www.mjwconsult.co.uk</url>
   </urls>
   <license>AGPL</license>
   <maintainer>
     <author>Joshua Walker (drastik) - Drastik by Design</author>
     <email>admin@drastikbydesign.com</email>
   </maintainer>
-  <releaseDate>2017-10-01</releaseDate>
-  <version>4.8mjwconsulting3</version>
+  <releaseDate>2017-10-07</releaseDate>
+  <version>4.9mjwconsulting1</version>
   <compatibility>
     <ver>4.5</ver>
     <ver>4.6</ver>

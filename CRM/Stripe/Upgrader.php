@@ -1,5 +1,4 @@
 <?php
-require_once('packages/stripe-php/init.php');
 /**
  * Collection of upgrade steps.
  * DO NOT USE a naming scheme other than upgrade_N, where N is an integer.  

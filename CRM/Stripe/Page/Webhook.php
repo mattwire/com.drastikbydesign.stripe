@@ -111,7 +111,6 @@ class CRM_Stripe_Page_Webhook extends CRM_Core_Page {
       CRM_Utils_System::civiExit();
     }
 
-    require_once ("packages/stripe-php/init.php");
     \Stripe\Stripe::setAppInfo('CiviCRM', CRM_Utils_System::version(), CRM_Utils_System::baseURL());
     \Stripe\Stripe::setApiKey($stripe_key);
 

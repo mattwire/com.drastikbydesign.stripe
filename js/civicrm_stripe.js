@@ -17,11 +17,11 @@
         $(".messages.crm-error.stripe-message:first").remove();
       }
       $form.prepend('<div class="messages crm-error stripe-message">'
-      + '<strong>Payment Error Response:</strong>'
-      + '<ul id="errorList">'
-      + '<li>Error: ' + response.error.message + '</li>'
-      + '</ul>'
-      + '</div>');
+        + '<strong>Payment Error Response:</strong>'
+        + '<ul id="errorList">'
+        + '<li>Error: ' + response.error.message + '</li>'
+        + '</ul>'
+        + '</div>');
 
       $submit.removeAttr('disabled').attr('value', buttonText);
 
@@ -40,9 +40,7 @@
 
   // Prepare the form.
   $(document).ready(function() {
-    $.getScript('https://js.stripe.com/v2/', function () {
-      Stripe.setPublishableKey($('#stripe-pub-key').val());
-    });
+    Stripe.setPublishableKey($('#stripe-pub-key').val());
 
     // Check for form marked as a stripe-payment-form by the server.
     if (!($('form.stripe-payment-form').length)) {
@@ -55,7 +53,7 @@
         $('#crm-container > form').addClass('stripe-payment-form');
       }
     }
-    
+
     $form   = $('form.stripe-payment-form');
     if (isWebform) {
       $submit = $form.find('.button-primary');
@@ -183,7 +181,7 @@
         }
       }
       else {
-          debugging('debug: qlmvy (Stripe is the only payprocessor here)');
+        debugging('debug: qlmvy (Stripe is the only payprocessor here)');
       }
 
       // Handle reuse of existing token
@@ -229,7 +227,7 @@
 }(cj, CRM));
 
 function debugging (errorCode) {
-// Uncomment the following to debug unexpected returns.
-//  console.log(errorCode);
+  // Uncomment the following to debug unexpected returns.
+  //  console.log(errorCode);
 }
 
