@@ -195,10 +195,8 @@ function stripe_civicrm_managed(&$entities) {
    */
   function stripe_civicrm_alterContent( &$content, $context, $tplName, &$object ) {
     if($context == 'form' && !empty($object->_paymentProcessor['class_name'])) {
-      if($object->_paymentProcessor['class_name'] == 'Payment_Stripe') {
-        $stripeJSURL = CRM_Core_Resources::singleton()->getUrl('com.drastikbydesign.stripe', 'js/civicrm_stripe.js');
-        $content .= "<script src='{$stripeJSURL}'></script>";
-      }
+      $stripeJSURL = CRM_Core_Resources::singleton()->getUrl('com.drastikbydesign.stripe', 'js/civicrm_stripe.js');
+      $content .= "<script src='{$stripeJSURL}'></script>";
     }
   }
 
