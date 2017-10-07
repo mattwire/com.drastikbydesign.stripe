@@ -40,6 +40,7 @@
 
   // Prepare the form.
   $(document).ready(function() {
+    Stripe.setPublishableKey($('#stripe-pub-key').val());
     loadStripeBillingBlock();
   });
 
@@ -48,8 +49,6 @@
   });
 
   function loadStripeBillingBlock() {
-    Stripe.setPublishableKey($('#stripe-pub-key').val());
-
     // Check for form marked as a stripe-payment-form by the server.
     if (!($('form.stripe-payment-form').length)) {
       // If there isn't one look for it.
@@ -57,8 +56,11 @@
         isWebform = true;
         $('form.webform-client-form').addClass('stripe-payment-form');
       }
+      else if ($('#crm-container form').length) {
+        $('#crm-container form').addClass('stripe-payment-form');
+      }
       else {
-        $('#crm-container > form').addClass('stripe-payment-form');
+        return;
       }
     }
 
