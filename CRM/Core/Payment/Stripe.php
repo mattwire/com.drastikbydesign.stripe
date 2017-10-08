@@ -208,7 +208,7 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
    * @param $form - reference to the form object
    */
   public function buildForm(&$form) {
-    $stripe_ppid = self::get_stripe_ppid($form);
+    $stripe_ppid = CRM_Utils_Array::value('id', $form->_paymentProcessor);
 
     // Add the ID to our form so our js can tell if Stripe has been selected.
     $form->addElement('hidden', 'stripe_id', $stripe_ppid, array('id' => 'stripe-id'));
@@ -241,36 +241,6 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
     // Add email field as it would usually be found on donation forms.
     if (!isset($form->_elementIndex['email']) && !empty($form->userEmail)) {
       $form->addElement('hidden', 'email', $form->userEmail, array('id' => 'user-email'));
-    }
-  }
-
- public static function get_stripe_ppid($form) {
-    if (empty($form->_paymentProcessor)) {
-      return;
-    }
-
-    // When called from admin backend (eg via CRM_Contribute_Form_Contribution, CRM_Member_Form_Membership)
-    // the isBackOffice flag will be set to true.
-    // But if called via webform in CiviCRM 4.7: isBackOffice=NULL and for is of class CRM_Financial_Form_Payment or CRM_Contribute_Form_Contribution
-    // Those don't have a _paymentProcessors array and only have one payprocesssor.
-    if (!empty($form->isBackOffice)
-      || (in_array(get_class($form), array('CRM_Financial_Form_Payment', 'CRM_Contribute_Form_Contribution')))) {
-      return $stripe_ppid = $form->_paymentProcessor['id'];
-    }
-    else {
-      // Find a Stripe pay processor ascociated with this Civi form and find the ID.
-      //   $payProcessors = $form->_paymentProcessors;
-      $payProcessors = CRM_Core_Form_Stripe::get_ppids($form);
-      foreach ($payProcessors as $payProcessor) {
-        if ($payProcessor['class_name'] == 'Payment_Stripe') {
-          return $stripe_ppid = $payProcessor['id'];
-          break;
-        }
-      }
-    }
-    // None of the payprocessors are Stripe.
-    if (empty($stripe_ppid)) {
-      return;
     }
   }
 

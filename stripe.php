@@ -3,6 +3,8 @@
 require_once 'stripe.civix.php';
 require_once __DIR__.'/vendor/autoload.php';
 
+use CRM_Stripe_ExtensionUtil as E;
+
 /**
  * Implementation of hook_civicrm_config().
  */
@@ -194,7 +196,7 @@ function stripe_civicrm_managed(&$entities) {
    * @return void
    */
   function stripe_civicrm_alterContent( &$content, $context, $tplName, &$object ) {
-    if($context == 'form' && !empty($object->_paymentProcessor['class_name'])) {
+    if ($context == 'form' && !empty($object->_paymentProcessor['class_name'])) {
       $stripeJSURL = CRM_Core_Resources::singleton()->getUrl('com.drastikbydesign.stripe', 'js/civicrm_stripe.js');
       $content .= "<script src='{$stripeJSURL}'></script>";
     }
