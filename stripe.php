@@ -209,9 +209,9 @@ function stripe_civicrm_managed(&$entities) {
  */
 function stripe_civicrm_buildForm($formName, &$form) {
   if (!empty($form->_paymentProcessor['class_name'])) {
-    CRM_Core_Resources::singleton()->addScriptUrl('https://js.stripe.com/v2/');
+    //CRM_Core_Resources::singleton()->addScriptUrl('https://js.stripe.com/v2/', 10, 'page-body');
   }
-  if (($formName == 'CRM_Member_Form_MembershipRenewal') && !empty($form->_paymentProcessor['class_name'])) {
+  if (/*$form->isBackOffice &&*/ !empty($form->_paymentProcessor['class_name'])) {
     // civicrm_stripe.js is not included on backend form renewal unless we add it here.
     CRM_Core_Resources::singleton()->addScriptFile('com.drastikbydesign.stripe', 'js/civicrm_stripe.js');
   }
