@@ -221,22 +221,12 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
     if (!empty($params[0]['stripe_token'])) {
       $params = $params[0];
     }
-    $stripe_token = (empty($params['stripe_token']) ? NULL : $params['stripe_token']);
+    $stripeToken = (empty($params['stripetoken']) ? NULL : $params['stripetoken']);
 
     // Add some hidden fields for Stripe.
-    if (!$form->elementExists('stripe_token')) {
-      $form->setAttribute('class', $form->getAttribute('class') . ' stripe-payment-form');
-      $form->addElement('hidden', 'stripe_token', $stripe_token, array('id' => 'stripe-token'));
+    if (!empty($stripeToken) && !$form->elementExists('stripetoken')) {
+        $form->addElement('hidden', 'stripetoken', $stripeToken, array('id' => 'stripe-token'));
     }
-
-    // Add the Civi version so we can accommodate different versions in civicrm_stripe.js.
-    if (self::get_civi_version() <= '4.7.0') {
-      $ext_mode = 1;
-    }
-    else {
-      $ext_mode = 2;
-    }
-    $form->addElement('hidden', 'ext_mode', $ext_mode, array('id' => 'ext-mode'));
 
     // Add email field as it would usually be found on donation forms.
     if (!isset($form->_elementIndex['email']) && !empty($form->userEmail)) {
@@ -312,8 +302,9 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
     $amount = (int) preg_replace('/[^\d]/', '', strval($amount));
 
     // Use Stripe.js instead of raw card details.
-    if (!empty($params['stripe_token'])) {
-      $card_details = $params['stripe_token'];
+    if (!empty($params['credit_card_number']) && (substr($params['credit_card_number'], 0, 4) === 'tok_')) {
+      $card_details = $params['credit_card_number'];
+      $params['credit_card_number'] = '';
     }
     else {
       CRM_Core_Error::fatal(ts('Stripe.js token was not passed!  Report this message to the site administrator.'));
@@ -781,5 +772,22 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
    */
   public function doTransferCheckout(&$params, $component) {
     CRM_Core_Error::fatal(ts('Use direct billing instead of Transfer method.'));
+  }
+
+  /**
+   * Default payment instrument validation.
+   *
+   * Implement the usual Luhn algorithm via a static function in the CRM_Core_Payment_Form if it's a credit card
+   * Not a static function, because I need to check for payment_type.
+   *
+   * @param array $values
+   * @param array $errors
+   */
+  public function validatePaymentInstrument($values, &$errors) {
+    CRM_Core_Form::validateMandatoryFields($this->getMandatoryFields(), $values, $errors);
+    if ($this->_paymentProcessor['payment_type'] == 1) {
+      // Don't validate credit card details as they are not passed (and stripe does this for us)
+      //CRM_Core_Payment_Form::validateCreditCard($values, $errors, $this->_paymentProcessor['id']);
+    }
   }
 }
