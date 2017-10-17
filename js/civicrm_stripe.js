@@ -28,18 +28,14 @@
     else {
       var token = response['id'];
       // Update form with the token & submit.
-      $form.find("input#stripe-token").remove();
-
-      // Insert the token into the form so it gets submitted to the server:
-      $form.append($('<input type="hidden" id="stripe-token" name="stripetoken" />').val(token));
-
       removeCCDetails($form);
+      // We use the credit_card_number field to pass token as this is reliable.
+      // Inserting an input field is unreliable on ajax forms and often gets missed from POST request for some reason.
       $form.find("input#credit_card_number").val(token);
 
       // Disable unload event handler
       window.onbeforeunload = null;
       // This triggers submit without generating a submit event (so we don't run submit handler again)
-//      window.setTimeout($form.get(0).submit(), 500);
       $form.get(0).submit();
     }
   }
@@ -69,6 +65,9 @@
       }
     }
 
+    if ($('.webform-client-form').length) {
+      isWebform = true;
+    }
 
     // Get the form containing payment details
     $form = CRM.$('input#stripe-pub-key').closest('form');
@@ -117,7 +116,7 @@
     else {
       // CiviCRM form
       // If we already have a token hide CC details
-      if ($form.find("input#stripe-token").val()) {
+      if ($form.find("input#credit_card_number").val()) {
         $('.credit_card_info-group').hide();
         $('#billing-payment-block').append('<input type="button" value="Edit CC details" id="ccButton" />');
         $('#ccButton').click(function() {
@@ -126,7 +125,6 @@
           $form.find("input#credit_card_number").val('');
           $('.credit_card_info-group').show();
           $('#ccButton').hide();
-          $form.find('input#stripe-token').val('');
         });
       }
       else {
@@ -174,29 +172,11 @@
             debugging('no payment processor selected');
             return true;
           }
-          if (!($form.find('input[name="stripe_token"]').length)) {
-            debugging('irjfg');
-            return true;
-          }
         }
       }
       // Disable the submit button to prevent repeated clicks, cache button text, restore if Stripe returns error
-      //buttonText = $submit.attr('value');
-      //$submit.prop('disabled', true).attr('value', 'Processing');
-
-      // Hide payment if total is 0 and no more participants.
-      if ($('#priceset').length) {
-        additionalParticipants = cj("#additional_participants").val();
-        // The currentTotal is already being calculated in Form/Contribution/Main.tpl.
-        if(typeof currentTotal !== 'undefined') {
-          if (currentTotal === 0 && !additionalParticipants) {
-            // This is also hit when "Going back", but we already have stripe_token.
-            debugging('ozlkf');
-            // This should not happen on Confirm Contribution, but seems to on 4.6 for some reason.
-            //return true;
-          }
-        }
-      }
+      buttonText = $submit.attr('value');
+      $submit.prop('disabled', true).attr('value', 'Processing');
 
       // Handle multiple payment options and Stripe not being chosen.
       if ($form.find(".crm-section.payment_processor-section").length > 0) {
@@ -215,7 +195,7 @@
       }
 
       // Handle reuse of existing token
-      if ($form.find("input#stripe-token").val()) {
+      if ($form.find("input#credit_card_number").val()) {
         removeCCDetails($form);
         debugging('debug: Re-using Stripe token');
         return true;
@@ -248,8 +228,6 @@
 
 function removeCCDetails($form) {
   // Remove the "name" attribute so params are not submitted
-  //$form.find("input#credit_card_number").removeAttr('name');
-  //$form.find("input#cvv2").removeAttr('name');
   $form.find("input#credit_card_number").val('0000000000000000');
   $form.find("input#cvv2").val('000');
 }
