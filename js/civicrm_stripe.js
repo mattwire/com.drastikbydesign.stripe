@@ -67,7 +67,7 @@
 
     // Get the form containing payment details
     $form = getBillingForm();
-    if (!$form) {
+    if (!$form.length) {
       debugging('No billing form!');
       return;
     }
