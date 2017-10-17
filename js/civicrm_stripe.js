@@ -116,29 +116,9 @@
       var webformPrevious = $('input.webform-previous').first().val();
     }
     else {
-      // CiviCRM form
-      // If we already have a token hide CC details
-      if ($form.find("input#credit_card_number").val()) {
-        $('.credit_card_info-group').hide();
-        var $editCCButton = $form.find('input#ccButton');
-        if (!$editCCButton.length) {
-          $editCCButton = '<input type="button" value="Edit CC details" id="ccButton" />';
-        }
-        $('#billing-payment-block').append($editCCButton);
-        $('#ccButton').click(function() {
-          // Clear token and show CC details if edit button was clicked
-          // As we use credit_card_number to pass token, make sure it is empty when shown
-          $form.find("input#credit_card_number").val('');
-          $form.find("input#cvv2").val('');
-          $('.credit_card_info-group').show();
-          $('#ccButton').hide();
-        });
-      }
-      else {
-        // As we use credit_card_number to pass token, make sure it is empty when shown
-        $form.find("input#credit_card_number").val('');
-        $form.find("input#cvv2").val('');
-      }
+      // As we use credit_card_number to pass token, make sure it is empty when shown
+      $form.find("input#credit_card_number").val('');
+      $form.find("input#cvv2").val('');
     }
 
     $submit.removeAttr('onclick');
