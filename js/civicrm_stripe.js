@@ -5,7 +5,6 @@
 (function($, CRM) {
 
   var buttonText;
-  var stripeFormSubmitted = false;
 
   // Response from Stripe.createToken.
   function stripeResponseHandler(status, response) {
@@ -26,13 +25,12 @@
         + '</ul>'
         + '</div>');
 
-      stripeFormSubmitted = false;
+      $form.data('submitted', false);
       $submit.prop('disabled', false).attr('value', buttonText);
     }
     else {
       var token = response['id'];
       // Update form with the token & submit.
-//      copyCCDetails($form);
       removeCCDetails($form);
       // We use the credit_card_number field to pass token as this is reliable.
       // Inserting an input field is unreliable on ajax forms and often gets missed from POST request for some reason.
@@ -106,19 +104,26 @@
     $form.unbind('submit');
 
     // Intercept form submission.
-    $(document).on('submit', $form, function(event) {
-      event.preventDefault();
+    $form.on('submit', function(event) {
       submit(event);
     });
 
     function submit(event) {
-      if (stripeFormSubmitted === true) {
-        debugging('already submitted');
-        return true;
-      }
-      stripeFormSubmitted = true;
+      event.preventDefault();
 
       $form = getBillingForm();
+      if ($form.data('submitted') === true) {
+        // Previously submitted - don't submit again
+        alert('Form already submitted. Please wait.');
+        return true;
+      } else {
+        // Mark it so that the next submit can be ignored
+        // ADDED requirement that form be valid
+        if($form.valid()) {
+          $form.data('submitted', true);
+        }
+      }
+
       $submit = getBillingSubmit();
       var isWebform = getIsWebform();
 
