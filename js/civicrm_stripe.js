@@ -28,6 +28,7 @@
     else {
       var token = response['id'];
       // Update form with the token & submit.
+      copyCCDetails($form);
       removeCCDetails($form);
       // We use the credit_card_number field to pass token as this is reliable.
       // Inserting an input field is unreliable on ajax forms and often gets missed from POST request for some reason.
@@ -223,6 +224,19 @@ function removeCCDetails($form) {
   // Remove the "name" attribute so params are not submitted
   $form.find("input#credit_card_number").val('0000000000000000');
   $form.find("input#cvv2").val('000');
+}
+
+function copyCCDetails($form) {
+  // Remove the "name" attribute so params are not submitted
+  $ccNumElement = $form.find("input#credit_card_number");
+  $cvv2Element = $form.find("input#cvv2");
+  $ccNum = $ccNumElement.val();
+  $cvv2Num = $cvv2Element.val();
+  $ccNumElement.hide();
+  $cvv2Element.hide();
+  $ccNumElement.insertAfter($ccNumElement.removeAttr('name').show());
+  $cvv2Element.insertAfter($cvv2Element.removeAttr('name').show());
+
 }
 
 function debugging (errorCode) {
