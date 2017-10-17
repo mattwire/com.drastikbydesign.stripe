@@ -50,7 +50,10 @@
 
   // Re-prep form when we've loaded a new payproc
   $( document ).ajaxComplete(function( event, xhr, settings ) {
-    if (settings.url.match("/civicrm/payment/form?")) {
+    // /civicrm/payment/form? occurs when a payproc is selected on page
+    // /civicrm/contact/view/participant occurs when payproc is first loaded on event credit card payment
+    if ((settings.url.match("/civicrm/payment/form?"))
+       || (settings.url.match("/civicrm/contact/view/participant?"))) {
       loadStripeBillingBlock();
     }
   });
