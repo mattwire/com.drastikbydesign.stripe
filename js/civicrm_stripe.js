@@ -120,7 +120,7 @@
       if ($form.find("input#cvv2").val()) {
         $('.credit_card_info-group').hide();
         var $editCCButton = $form.find('input#ccButton');
-        if (!$editCCButton) {
+        if (!$editCCButton.length) {
           $editCCButton = '<input type="button" value="Edit CC details" id="ccButton" />';
         }
         $('#billing-payment-block').append($editCCButton);
