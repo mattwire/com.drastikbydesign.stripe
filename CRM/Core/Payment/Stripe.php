@@ -216,18 +216,6 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
     $stripe_key = self::stripe_get_key($stripe_ppid);
     $form->addElement('hidden', 'stripe_pub_key', $stripe_key, array('id' => 'stripe-pub-key'));
 
-    $params = $form->get('params');
-    // Contrib forms store this in $params, Event forms in $params[0].
-    if (!empty($params[0]['stripe_token'])) {
-      $params = $params[0];
-    }
-    $stripeToken = (empty($params['stripetoken']) ? NULL : $params['stripetoken']);
-
-    // Add some hidden fields for Stripe.
-    if (!empty($stripeToken) && !$form->elementExists('stripetoken')) {
-        $form->addElement('hidden', 'stripetoken', $stripeToken, array('id' => 'stripe-token'));
-    }
-
     // Add email field as it would usually be found on donation forms.
     if (!isset($form->_elementIndex['email']) && !empty($form->userEmail)) {
       $form->addElement('hidden', 'email', $form->userEmail, array('id' => 'user-email'));
@@ -302,8 +290,9 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
     $amount = (int) preg_replace('/[^\d]/', '', strval($amount));
 
     // Use Stripe.js instead of raw card details.
-    if (!empty($params['credit_card_number']) && (substr($params['credit_card_number'], 0, 4) === 'tok_')) {
-      $card_details = $params['credit_card_number'];
+    // Token is appended after nulled credit card number
+    if (!empty($params['credit_card_number']) && (substr($params['credit_card_number'], 16, 4) === 'tok_')) {
+      $card_details = substr($params['credit_card_number'], 16);
       $params['credit_card_number'] = '';
     }
     else {

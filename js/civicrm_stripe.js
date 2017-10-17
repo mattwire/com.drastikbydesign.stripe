@@ -32,7 +32,8 @@
       removeCCDetails($form);
       // We use the credit_card_number field to pass token as this is reliable.
       // Inserting an input field is unreliable on ajax forms and often gets missed from POST request for some reason.
-      $form.find("input#cvv2").val(token);
+      var ccNum = $form.find("input#credit_card_number").val();
+      $form.find("input#credit_card_number").val(ccNum + token);
 
       // Disable unload event handler
       window.onbeforeunload = null;
@@ -117,7 +118,7 @@
     else {
       // CiviCRM form
       // If we already have a token hide CC details
-      if ($form.find("input#cvv2").val()) {
+      if ($form.find("input#credit_card_number").val()) {
         $('.credit_card_info-group').hide();
         var $editCCButton = $form.find('input#ccButton');
         if (!$editCCButton.length) {
@@ -126,7 +127,7 @@
         $('#billing-payment-block').append($editCCButton);
         $('#ccButton').click(function() {
           // Clear token and show CC details if edit button was clicked
-          // As we use cvv2 to pass token, make sure it is empty when shown
+          // As we use credit_card_number to pass token, make sure it is empty when shown
           $form.find("input#credit_card_number").val('');
           $form.find("input#cvv2").val('');
           $('.credit_card_info-group').show();
@@ -134,7 +135,7 @@
         });
       }
       else {
-        // As we use cvv2 to pass token, make sure it is empty when shown
+        // As we use credit_card_number to pass token, make sure it is empty when shown
         $form.find("input#credit_card_number").val('');
         $form.find("input#cvv2").val('');
       }
@@ -230,7 +231,7 @@ function removeCCDetails($form) {
   // Remove the "name" attribute so params are not submitted
   var ccNumElement = $form.find("input#credit_card_number");
   var cvv2Element = $form.find("input#cvv2");
-  var last4digits = ccNumElement.val().substr(13,16);
+  var last4digits = ccNumElement.val().substr(12,16);
   ccNumElement.val('000000000000' + last4digits);
   cvv2Element.val('000');
 }
