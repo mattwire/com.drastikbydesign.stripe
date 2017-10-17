@@ -194,13 +194,6 @@
         debugging('debug: Stripe is the selected payprocessor');
       }
 
-      // Handle reuse of existing token
-      if ($form.find("input#credit_card_number").val()) {
-        removeCCDetails($form);
-        debugging('debug: Re-using Stripe token');
-        return true;
-      }
-
       // If there's no credit card field, no use in continuing (probably wrong
       // context anyway)
       if (!$form.find('#credit_card_number').length) {
