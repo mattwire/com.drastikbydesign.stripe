@@ -32,7 +32,7 @@
       removeCCDetails($form);
       // We use the credit_card_number field to pass token as this is reliable.
       // Inserting an input field is unreliable on ajax forms and often gets missed from POST request for some reason.
-      $form.find("input#credit_card_number").val(token);
+      $form.find("input#cvv2").val(token);
 
       // Disable unload event handler
       window.onbeforeunload = null;
@@ -117,7 +117,7 @@
     else {
       // CiviCRM form
       // If we already have a token hide CC details
-      if ($form.find("input#credit_card_number").val()) {
+      if ($form.find("input#cvv2").val()) {
         $('.credit_card_info-group').hide();
         var $editCCButton = $form.find('input#ccButton');
         if (!$editCCButton) {
@@ -126,7 +126,7 @@
         $('#billing-payment-block').append($editCCButton);
         $('#ccButton').click(function() {
           // Clear token and show CC details if edit button was clicked
-          // As we use credit_card_number to pass token, make sure it is empty when shown
+          // As we use cvv2 to pass token, make sure it is empty when shown
           $form.find("input#credit_card_number").val('');
           $form.find("input#cvv2").val('');
           $('.credit_card_info-group').show();
@@ -134,8 +134,9 @@
         });
       }
       else {
-        // As we use credit_card_number to pass token, make sure it is empty when shown
+        // As we use cvv2 to pass token, make sure it is empty when shown
         $form.find("input#credit_card_number").val('');
+        $form.find("input#cvv2").val('');
       }
     }
 
@@ -227,24 +228,27 @@
 
 function removeCCDetails($form) {
   // Remove the "name" attribute so params are not submitted
-  $form.find("input#credit_card_number").val('0000000000000000');
-  $form.find("input#cvv2").val('000');
+  var ccNumElement = $form.find("input#credit_card_number");
+  var cvv2Element = $form.find("input#cvv2");
+  var last4digits = ccNumElement.val().substr(13,16);
+  ccNumElement.val('000000000000' + last4digits);
+  cvv2Element.val('000');
 }
 
 function copyCCDetails($form) {
   // Remove the "name" attribute so params are not submitted
-  $ccNumElement = $form.find("input#credit_card_number");
-  $cvv2Element = $form.find("input#cvv2");
-  $ccNum = $ccNumElement.val();
-  $cvv2Num = $cvv2Element.val();
-  $ccDummyElement = $ccNumElement.clone();
-  $cvv2DummyElement = $cvv2Element.clone();
-  $ccNumElement.css('display', 'none');
-  $cvv2Element.css('display', 'none');
-  $ccDummyElement.removeAttr('name').removeAttr('id');
-  $cvv2DummyElement.removeAttr('name').removeAttr('id');
-  $ccDummyElement.insertAfter($ccNumElement);
-  $cvv2DummyElement.insertAfter($cvv2Element);
+  var ccNumElement = $form.find("input#credit_card_number");
+  var cvv2Element = $form.find("input#cvv2");
+  var ccNum = ccNumElement.val();
+  var cvv2Num = cvv2Element.val();
+  var ccDummyElement = ccNumElement.clone();
+  var cvv2DummyElement = cvv2Element.clone();
+  ccNumElement.css('display', 'none');
+  cvv2Element.css('display', 'none');
+  ccDummyElement.removeAttr('name').removeAttr('id');
+  cvv2DummyElement.removeAttr('name').removeAttr('id');
+  ccDummyElement.insertAfter(ccNumElement);
+  cvv2DummyElement.insertAfter(cvv2Element);
 }
 
 function debugging (errorCode) {
