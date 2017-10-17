@@ -203,23 +203,123 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
   }
 
   /**
+   * Override CRM_Core_Payment function
+   */
+  public function getPaymentFormFields() {
+    return array(
+      'credit_card_type',
+      'credit_card_number',
+      'cvv2',
+      'credit_card_exp_date',
+      'stripe_token',
+      'stripe_pub_key',
+      'stripe_id',
+    );
+  }
+
+  /**
+   * Return an array of all the details about the fields potentially required for payment fields.
+   *
+   * Only those determined by getPaymentFormFields will actually be assigned to the form
+   *
+   * @return array
+   *   field metadata
+   */
+  public function getPaymentFormFieldsMetadata() {
+    $creditCardType = array('' => ts('- select -')) + CRM_Contribute_PseudoConstant::creditCard();
+    return array(
+      'credit_card_number' => array(
+        'htmlType' => 'text',
+        'name' => 'credit_card_number',
+        'title' => ts('Card Number'),
+        'cc_field' => TRUE,
+        'attributes' => array(
+          'size' => 20,
+          'maxlength' => 20,
+          'autocomplete' => 'off',
+        ),
+        'is_required' => TRUE,
+      ),
+      'cvv2' => array(
+        'htmlType' => 'text',
+        'name' => 'cvv2',
+        'title' => ts('Security Code'),
+        'cc_field' => TRUE,
+        'attributes' => array(
+          'size' => 5,
+          'maxlength' => 10,
+          'autocomplete' => 'off',
+        ),
+        'is_required' => TRUE,
+      ),
+      'credit_card_exp_date' => array(
+        'htmlType' => 'date',
+        'name' => 'credit_card_exp_date',
+        'title' => ts('Expiration Date'),
+        'cc_field' => TRUE,
+        'attributes' => CRM_Core_SelectValues::date('creditCard'),
+        'is_required' => TRUE,
+        'month_field' => 'credit_card_exp_date_M',
+        'year_field' => 'credit_card_exp_date_Y',
+      ),
+
+      'credit_card_type' => array(
+        'htmlType' => 'select',
+        'name' => 'credit_card_type',
+        'title' => ts('Card Type'),
+        'cc_field' => TRUE,
+        'attributes' => $creditCardType,
+        'is_required' => FALSE,
+      ),
+      'stripe_token' => array(
+        'htmlType' => 'hidden',
+        'name' => 'stripe_token',
+        'title' => 'Stripe Token',
+        'attributes' => array(
+          'id' => 'stripe-token',
+        ),
+        'cc_field' => TRUE,
+        'is_required' => TRUE,
+      ),
+      'stripe_id' => array(
+        'htmlType' => 'hidden',
+        'name' => 'stripe_id',
+        'title' => 'Stripe ID',
+        'attributes' => array(
+          'id' => 'stripe-id',
+        ),
+        'cc_field' => TRUE,
+        'is_required' => TRUE,
+      ),
+      'stripe_pub_key' => array(
+        'htmlType' => 'hidden',
+        'name' => 'stripe_pub_key',
+        'title' => 'Stripe Public Key',
+        'attributes' => array(
+          'id' => 'stripe-pub-key',
+        ),
+        'cc_field' => TRUE,
+        'is_required' => TRUE,
+      ),
+    );
+  }
+
+  /**
    * Implementation of hook_civicrm_buildForm().
    *
    * @param $form - reference to the form object
    */
   public function buildForm(&$form) {
+    if ($form->isSubmitted()) return;
+
     $stripe_ppid = CRM_Utils_Array::value('id', $form->_paymentProcessor);
-
-    // Add the ID to our form so our js can tell if Stripe has been selected.
-    $form->addElement('hidden', 'stripe_id', $stripe_ppid, array('id' => 'stripe-id'));
-
     $stripe_key = self::stripe_get_key($stripe_ppid);
-    $form->addElement('hidden', 'stripe_pub_key', $stripe_key, array('id' => 'stripe-pub-key'));
 
-    // Add email field as it would usually be found on donation forms.
-    if (!isset($form->_elementIndex['email']) && !empty($form->userEmail)) {
-      $form->addElement('hidden', 'email', $form->userEmail, array('id' => 'user-email'));
-    }
+    // Set ddi_reference
+    $defaults = array();
+    $defaults['stripe_id'] = $stripe_ppid;
+    $defaults['stripe_pub_key'] = $stripe_key;
+    $form->setDefaults($defaults);
   }
 
   /**
@@ -290,13 +390,15 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
     $amount = (int) preg_replace('/[^\d]/', '', strval($amount));
 
     // Use Stripe.js instead of raw card details.
-    // Token is appended after nulled credit card number
-    if (!empty($params['credit_card_number']) && (substr($params['credit_card_number'], 16, 4) === 'tok_')) {
-      $card_details = substr($params['credit_card_number'], 16);
-      $params['credit_card_number'] = '';
+    if (!empty($params['stripe_token'])) {
+      $card_token = $params['stripe_token'];
+    }
+    else if(!empty(CRM_Utils_Array::value('stripe_token', $_POST, NULL))) {
+      $card_token = CRM_Utils_Array::value('stripe_token', $_POST, NULL);
     }
     else {
-      CRM_Core_Error::fatal(ts('Stripe.js token was not passed!  Report this message to the site administrator.'));
+      CRM_Core_Error::statusBounce(ts('Unable to complete payment! Please this to the site administrator with a description of what you were trying to do.'));
+      Civi::log()->debug('Stripe.js token was not passed!  Report this message to the site administrator. $params: ' . print_r($params, TRUE));
     }
 
     // Check for existing customer, create new otherwise.
@@ -387,7 +489,7 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
     if (!isset($customer_query)) {
       $sc_create_params = array(
         'description' => 'Donor from CiviCRM',
-        'card' => $card_details,
+        'card' => $card_token,
         'email' => $email,
       );
 
@@ -428,7 +530,7 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
           // coming through for the 2nd time.  Don't need to update customer again.
         }
         else {
-          $stripe_customer->card = $card_details;
+          $stripe_customer->card = $card_token;
           $response = $this->stripeCatchErrors('save', $stripe_customer, $params);
             if (isset($response) && $this->isErrorReturn($response)) {
               return $response;
@@ -440,7 +542,7 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
         // retrieved from Stripe.  Was he deleted?
         $sc_create_params = array(
           'description' => 'Donor from CiviCRM',
-          'card' => $card_details,
+          'card' => $card_token,
           'email' => $email,
         );
 
@@ -498,7 +600,7 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
       $stripe_charge['customer'] = $stripe_customer->id;
     }
     else {
-      $stripe_charge['card'] = $card_details;
+      $stripe_charge['card'] = $card_token;
     }
 
     // Handle recurring payments in doRecurPayment().
