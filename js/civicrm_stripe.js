@@ -119,11 +119,16 @@
       // If we already have a token hide CC details
       if ($form.find("input#credit_card_number").val()) {
         $('.credit_card_info-group').hide();
-        $('#billing-payment-block').append('<input type="button" value="Edit CC details" id="ccButton" />');
+        var $editCCButton = $form.find('input#ccButton');
+        if (!$editCCButton) {
+          $editCCButton = '<input type="button" value="Edit CC details" id="ccButton" />';
+        }
+        $('#billing-payment-block').append($editCCButton);
         $('#ccButton').click(function() {
           // Clear token and show CC details if edit button was clicked
           // As we use credit_card_number to pass token, make sure it is empty when shown
           $form.find("input#credit_card_number").val('');
+          $form.find("input#cvv2").val('');
           $('.credit_card_info-group').show();
           $('#ccButton').hide();
         });
@@ -232,11 +237,14 @@ function copyCCDetails($form) {
   $cvv2Element = $form.find("input#cvv2");
   $ccNum = $ccNumElement.val();
   $cvv2Num = $cvv2Element.val();
-  $ccNumElement.hide();
-  $cvv2Element.hide();
-  $ccNumElement.insertAfter($ccNumElement.removeAttr('name').show());
-  $cvv2Element.insertAfter($cvv2Element.removeAttr('name').show());
-
+  $ccDummyElement = $ccNumElement.clone();
+  $cvv2DummyElement = $cvv2Element.clone();
+  $ccNumElement.css('display', 'none');
+  $cvv2Element.css('display', 'none');
+  $ccDummyElement.removeAttr('name').removeAttr('id');
+  $cvv2DummyElement.removeAttr('name').removeAttr('id');
+  $ccDummyElement.insertAfter($ccNumElement);
+  $cvv2DummyElement.insertAfter($cvv2Element);
 }
 
 function debugging (errorCode) {
