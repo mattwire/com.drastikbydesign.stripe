@@ -189,14 +189,29 @@ function stripe_civicrm_managed(&$entities) {
   }
 
 /**
+ * Implementation of hook_civicrm_alterContent
+ *
+ * Adding civicrm_stripe.js in a way that works for webforms and Civi forms.
+ *
+ * @return void
+ */
+function stripe_civicrm_alterContent( &$content, $context, $tplName, &$object ) {
+  if ($context == 'form' && !empty($object->_paymentProcessor['class_name'])) {
+    $stripeJSURL = CRM_Core_Resources::singleton()->getUrl('com.drastikbydesign.stripe', 'js/civicrm_stripe.js');
+    $content .= "<script src='{$stripeJSURL}'></script>";
+  }
+}
+
+/**
  * Add stripe.js to forms, to generate stripe token
  * @param $formName
  * @param $form
  */
 function stripe_civicrm_buildForm($formName, &$form) {
-  if (!empty($form->_paymentProcessor['class_name'])) {
+  /*if (!empty($form->_paymentProcessor['class_name'])) {
+  // Don't add here as it won't work with webform, we use stripe_civicrm_alterContent instead.
     // civicrm_stripe.js is not included on backend form renewal unless we add it here.
     CRM_Core_Resources::singleton()->addScriptUrl('https://js.stripe.com/v2/', 10, 'page-body');
     CRM_Core_Resources::singleton()->addScriptFile('com.drastikbydesign.stripe', 'js/civicrm_stripe.js');
-  }
+  }*/
 }

@@ -875,10 +875,12 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
    * @param array $errors
    */
   public function validatePaymentInstrument($values, &$errors) {
-    CRM_Core_Form::validateMandatoryFields($this->getMandatoryFields(), $values, $errors);
+    // Use $_POST here and not $values - for webform fields are not set in $values, but are in $_POST
+    CRM_Core_Form::validateMandatoryFields($this->getMandatoryFields(), $_POST, $errors);
     if ($this->_paymentProcessor['payment_type'] == 1) {
       // Don't validate credit card details as they are not passed (and stripe does this for us)
       //CRM_Core_Payment_Form::validateCreditCard($values, $errors, $this->_paymentProcessor['id']);
     }
   }
+
 }
