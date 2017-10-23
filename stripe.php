@@ -196,7 +196,12 @@ function stripe_civicrm_managed(&$entities) {
  * @return void
  */
 function stripe_civicrm_alterContent( &$content, $context, $tplName, &$object ) {
-  if ($context == 'form' && !empty($object->_paymentProcessor['class_name'])) {
+  // Adding stripe js:
+  // - Webforms don't call hook_civicrm_buildForm so we have to user alterContent
+  // - Almost all forms have context = 'form' and a paymentprocessor object.
+  // - Membership backend form is a 'page' and has a _isPaymentProcessor=true flag.
+  if (($context == 'form' && !empty($object->_paymentProcessor['class_name']))
+     || (($context == 'page') && !empty($object->_isPaymentProcessor))) {
     $stripeJSURL = CRM_Core_Resources::singleton()->getUrl('com.drastikbydesign.stripe', 'js/civicrm_stripe.js');
     $content .= "<script src='{$stripeJSURL}'></script>";
   }
