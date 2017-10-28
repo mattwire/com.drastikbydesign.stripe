@@ -237,7 +237,8 @@
       //  add a flag that we can set to stop payment submission
       $form.data('submit-dont-process', '0');
       // Find submit buttons with formnovalidate=1 and add an onclick handler to set flag
-      $form.find('input[type="submit"][formnovalidate="1"], input[type="submit"].cancel').click( function() {
+      // webform back: input[type="submit"][formnovalidate="formnovalidate"]
+      $form.find('input[type="submit"][formnovalidate="1"], input[type="submit"][formnovalidate="formnovalidate"], input[type="submit"].cancel').click( function() {
         debugging('dontprocess');
         debugging($(this));
         $form.data('submit-dont-process', 1);
