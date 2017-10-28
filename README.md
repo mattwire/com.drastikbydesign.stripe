@@ -70,7 +70,9 @@ rgburton, Swingline0, BorislavZlatanov, agh1, & jmcclelland
 TESTING
 --------
 1. Test webform submission with payment and user-select, single processor.
-2. Test online contribution page with single processor, multi-processor (stripe default, stripe non-default).
-3. Test offline contribution page with single processor, multi-processor (stripe default, stripe non-default).
-4. Test event registration.
-5. Test event registration (cart checkout).
+1. Test online contribution page with single processor, multi-processor (stripe default, stripe non-default).
+1. Test offline contribution page with single processor, multi-processor (stripe default, stripe non-default).
+1. Test event registration.
+1. Test event registration (cart checkout).
+1. Test offline event registration.
+1. Test offline membership.
