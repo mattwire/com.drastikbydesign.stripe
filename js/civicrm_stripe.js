@@ -128,25 +128,13 @@
         return true;
       }
 
-      if ($form.data('submitted') === true) {
-        // Previously submitted - don't submit again
-        alert('Form already submitted. Please wait.');
-        return true;
-      } else {
-        // Mark it so that the next submit can be ignored
-        // ADDED requirement that form be valid
-        if($form.valid()) {
-          $form.data('submitted', true);
-        }
-      }
-
       $submit = getBillingSubmit();
       var isWebform = getIsWebform();
 
       if (isWebform) {
         var $processorFields = $('.civicrm-enabled[name$="civicrm_1_contribution_1_contribution_payment_processor_id]"]');
 
-        if ($('#action').attr('value') === webformPrevious) {
+        if ($('#action').attr('value') === getWebformBackButton()) {
           // Don't submit if the webform back button was pressed
           debugging('webform back button');
           return true;
@@ -165,6 +153,20 @@
           }
         }
       }
+
+      // Lock to prevent multiple submissions
+      if ($form.data('submitted') === true) {
+        // Previously submitted - don't submit again
+        alert('Form already submitted. Please wait.');
+        return true;
+      } else {
+        // Mark it so that the next submit can be ignored
+        // ADDED requirement that form be valid
+        if($form.valid()) {
+          $form.data('submitted', true);
+        }
+      }
+
       // Disable the submit button to prevent repeated clicks, cache button text, restore if Stripe returns error
       buttonText = $submit.attr('value');
       $submit.prop('disabled', true).attr('value', 'Processing');
@@ -211,6 +213,10 @@
 
   function getIsWebform() {
     return $('.webform-client-form').length;
+  }
+
+  function getWebformBackButton() {
+    return $('input.webform-previous').first().val();
   }
 
   function getBillingForm() {
