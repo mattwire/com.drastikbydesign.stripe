@@ -201,13 +201,18 @@ static $_stripe_scripts_added;
  */
 function stripe_civicrm_alterContent( &$content, $context, $tplName, &$object ) {
   global $_stripe_scripts_added;
-  // Adding stripe js:
-  // - Webforms don't call hook_civicrm_buildForm so we have to user alterContent
-  // - Almost all forms have context = 'form' and a paymentprocessor object.
-  // - Membership backend form is a 'page' and has a _isPaymentProcessor=true flag.
+  /* Adding stripe js:
+   * - Webforms don't get scripts added by hook_civicrm_buildForm so we have to user alterContent
+   * - (Webforms still call buildForm and it looks like they are added but they are not,
+   *   which is why we check for $object instanceof CRM_Financial_Form_Payment here to ensure that
+   *   Webforms always have scripts added).
+   * - Almost all forms have context = 'form' and a paymentprocessor object.
+   * - Membership backend form is a 'page' and has a _isPaymentProcessor=true flag.
+   *
+   */
   if (($context == 'form' && !empty($object->_paymentProcessor['class_name']))
      || (($context == 'page') && !empty($object->_isPaymentProcessor))) {
-    if (!$_stripe_scripts_added) {
+    if (!$_stripe_scripts_added || $object instanceof CRM_Financial_Form_Payment) {
       $stripeJSURL = CRM_Core_Resources::singleton()
         ->getUrl('com.drastikbydesign.stripe', 'js/civicrm_stripe.js');
       $content .= "<script src='{$stripeJSURL}'></script>";
