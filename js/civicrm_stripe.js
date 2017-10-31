@@ -23,13 +23,14 @@
         + '</ul>'
         + '</div>');
 
+      removeCCDetails($form, true);
       $form.data('submitted', false);
       $submit.prop('disabled', false);
     }
     else {
       var token = response['id'];
       // Update form with the token & submit.
-      removeCCDetails($form);
+      removeCCDetails($form, false);
       // We use the credit_card_number field to pass token as this is reliable.
       // Inserting an input field is unreliable on ajax forms and often gets missed from POST request for some reason.
       $form.find("input#stripe-token").val(token);
@@ -252,13 +253,19 @@
     return $submit;
   }
 
-  function removeCCDetails($form) {
+  function removeCCDetails($form, $truncate) {
     // Remove the "name" attribute so params are not submitted
     var ccNumElement = $form.find("input#credit_card_number");
     var cvv2Element = $form.find("input#cvv2");
-    var last4digits = ccNumElement.val().substr(12,16);
-    ccNumElement.val('000000000000' + last4digits);
-    cvv2Element.val('000');
+    if ($truncate) {
+      ccNumElement.val('');
+      cvv2Element.val('');
+    }
+    else {
+      var last4digits = ccNumElement.val().substr(12, 16);
+      ccNumElement.val('000000000000' + last4digits);
+      cvv2Element.val('000');
+    }
   }
 
   function debugging (errorCode) {
