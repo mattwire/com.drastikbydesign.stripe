@@ -305,6 +305,31 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
   }
 
   /**
+   * Get form metadata for billing address fields.
+   *
+   * @param int $billingLocationID
+   *
+   * @return array
+   *    Array of metadata for address fields.
+   */
+  public function getBillingAddressFieldsMetadata($billingLocationID = NULL) {
+    $metadata = parent::getBillingAddressFieldsMetadata($billingLocationID);
+    if (!$billingLocationID) {
+      // Note that although the billing id is passed around the forms the idea that it would be anything other than
+      // the result of the function below doesn't seem to have eventuated.
+      // So taking this as a param is possibly something to be removed in favour of the standard default.
+      $billingLocationID = CRM_Core_BAO_LocationType::getBilling();
+    }
+
+    // Stripe does not require the state/county field
+    if (!empty($metadata["billing_state_province_id-{$billingLocationID}"]['is_required'])) {
+      $metadata["billing_state_province_id-{$billingLocationID}"]['is_required'] = FALSE;
+    }
+
+    return $metadata;
+  }
+
+  /**
    * Implementation of hook_civicrm_buildForm().
    *
    * @param $form - reference to the form object
