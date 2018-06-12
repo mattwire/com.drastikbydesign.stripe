@@ -140,7 +140,7 @@
       $form.data('submit-dont-process', 1);
     });
 
-    $submit.click( function() {
+    $submit.click( function(event) {
       // Take over the click function of the form.
       debugging('clearing submit-dont-process');
       $form.data('submit-dont-process', 0);
@@ -268,6 +268,15 @@
             debugging('no payment processor selected');
             return true;
           }
+        }
+      }
+
+      // Don't submit via payment processor if total amount = 0
+      if (typeof calculateTotalFee == 'function') {
+        var totalFee = calculateTotalFee();
+        if (totalFee == '0') {
+          debugging("Total amount is 0");
+          return true;
         }
       }
 

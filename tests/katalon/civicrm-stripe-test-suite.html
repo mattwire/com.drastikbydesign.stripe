@@ -33,6 +33,8 @@
 </tr>
 <tr><td>clickAndWait</td><td>link=Extensions<datalist><option>link=Extensions</option><option>//a[contains(text(),'Extensions')]</option><option>//div[@id='root-menu-div']/div[20]/ul/li[3]/div/a</option><option>//a[contains(@href, '/civicrm/admin/extensions?reset=1')]</option><option>//div[20]/ul/li[3]/div/a</option><option>css=li.active &gt; div.menu-item &gt; a</option></datalist></td><td></td>
 </tr>
+<tr><td>click</td><td>//a[@id='new']/span<datalist><option>//a[@id='new']/span</option><option>//div[3]/div/div/a/span</option><option>css=#new &gt; span</option></datalist></td><td></td>
+</tr>
 <tr><td>clickAndWait</td><td>link=Install<datalist><option>link=Install</option><option>//a[contains(text(),'Install')]</option><option>//tr[@id='extension-com.drastikbydesign.stripe']/td[5]/span/a</option><option>//a[contains(@href, '/civicrm/admin/extensions?action=add&amp;id=com.drastikbydesign.stripe&amp;key=com.drastikbydesign.stripe')]</option><option>//span/a</option><option>css=a.action-item.crm-hover-button</option></datalist></td><td></td>
 </tr>
 <tr><td>clickAndWait</td><td>id=_qf_Extensions_next-bottom<datalist><option>id=_qf_Extensions_next-bottom</option><option>name=_qf_Extensions_next</option><option>//input[@id='_qf_Extensions_next-bottom']</option><option>//form[@id='Extensions']/div[2]/div[2]/span/input</option><option>//span/input</option><option>css=#_qf_Extensions_next-bottom</option></datalist></td><td></td>
@@ -99,7 +101,7 @@
 <tr><td rowspan="1" colspan="3">Offline Contribution, default PP</td></tr>
 </thead>
 <tbody>
-<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=contribute<datalist><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=contribute</option></datalist></td><td></td>
+<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=contribute<datalist><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=contribute</option></datalist></td><td></td>
 </tr>
 <tr><td>click</td><td>//form[@id='Search']/div[2]/div[2]/a[2]/span<datalist><option>//form[@id='Search']/div[2]/div[2]/a[2]/span</option><option>//a[2]/span</option></datalist></td><td></td>
 </tr>
@@ -141,7 +143,7 @@
 <tr><td rowspan="1" colspan="3">Offline Contribution, alternative PP</td></tr>
 </thead>
 <tbody>
-<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=contribute<datalist><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=contribute</option><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option></datalist></td><td></td>
+<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=contribute<datalist><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=contribute</option><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option></datalist></td><td></td>
 </tr>
 <tr><td>click</td><td>//form[@id='Search']/div[2]/div[2]/a[2]/span<datalist><option>//form[@id='Search']/div[2]/div[2]/a[2]/span</option><option>//a[2]/span</option></datalist></td><td></td>
 </tr>
@@ -189,9 +191,9 @@
 <tr><td rowspan="1" colspan="3">Offline Membership, default PP</td></tr>
 </thead>
 <tbody>
-<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=member<datalist><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=contribute</option><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=member</option></datalist></td><td></td>
+<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=member<datalist><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=contribute</option><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=member</option></datalist></td><td></td>
 </tr>
-<tr><td>click</td><td>//div[@id='ui-id-31']/div/div[2]/a[2]<datalist><option>//div[@id='ui-id-31']/div/div[2]/a[2]</option><option>xpath=(//a[contains(@href, '/civicrm/contact/view/membership?reset=1&amp;action=add&amp;cid=109&amp;context=membership&amp;mode=live')])[2]</option><option>//div[4]/div/div[2]/a[2]</option></datalist></td><td></td>
+<tr><td>click</td><td>//div[@id='ui-id-27']/div/div[2]/a[2]/span<datalist><option>//div[@id='ui-id-27']/div/div[2]/a[2]/span</option><option>//div[4]/div/div[2]/a[2]/span</option></datalist></td><td></td>
 </tr>
 <tr><td>click</td><td>id=membership_type_id_1<datalist><option>id=membership_type_id_1</option><option>name=membership_type_id[1]</option><option>//select[@id='membership_type_id_1']</option><option>//span[@id='mem_type_id']/select[2]</option><option>//select[2]</option><option>css=#membership_type_id_1</option></datalist></td><td></td>
 </tr>
@@ -235,9 +237,9 @@
 <tr><td rowspan="1" colspan="3">Offline Membership, alternate PP</td></tr>
 </thead>
 <tbody>
-<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=member<datalist><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=member</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=contribute</option><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option></datalist></td><td></td>
+<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=member<datalist><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=member</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=contribute</option><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option></datalist></td><td></td>
 </tr>
-<tr><td>click</td><td>//div[@id='ui-id-31']/div/div[2]/a[2]<datalist><option>//div[@id='ui-id-31']/div/div[2]/a[2]</option><option>xpath=(//a[contains(@href, '/civicrm/contact/view/membership?reset=1&amp;action=add&amp;cid=109&amp;context=membership&amp;mode=live')])[2]</option><option>//div[4]/div/div[2]/a[2]</option></datalist></td><td></td>
+<tr><td>click</td><td>//div[@id='ui-id-27']/div/div[2]/a[2]/span<datalist><option>//div[@id='ui-id-27']/div/div[2]/a[2]/span</option><option>//div[4]/div/div[2]/a[2]/span</option></datalist></td><td></td>
 </tr>
 <tr><td>click</td><td>id=membership_type_id_1<datalist><option>id=membership_type_id_1</option><option>name=membership_type_id[1]</option><option>//select[@id='membership_type_id_1']</option><option>//span[@id='mem_type_id']/select[2]</option><option>//select[2]</option><option>css=#membership_type_id_1</option></datalist></td><td></td>
 </tr>
@@ -287,9 +289,9 @@
 <tr><td rowspan="1" colspan="3">Offline Participant, default PP</td></tr>
 </thead>
 <tbody>
-<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=participant<datalist><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=participant</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=member</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=contribute</option><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option></datalist></td><td></td>
+<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=participant<datalist><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=participant</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=member</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=contribute</option><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option></datalist></td><td></td>
 </tr>
-<tr><td>click</td><td>//form[@id='Search']/div[3]/a[2]<datalist><option>//form[@id='Search']/div[3]/a[2]</option><option>xpath=(//a[contains(@href, '/civicrm/contact/view/participant?reset=1&amp;action=add&amp;cid=109&amp;context=participant&amp;mode=live')])[2]</option><option>//div[3]/a[2]</option></datalist></td><td></td>
+<tr><td>click</td><td>//form[@id='Search']/div[3]/a[2]<datalist><option>//form[@id='Search']/div[3]/a[2]</option><option>xpath=(//a[contains(@href, '/civicrm/contact/view/participant?reset=1&amp;action=add&amp;cid=147&amp;context=participant&amp;mode=live')])[2]</option><option>//div[3]/a[2]</option></datalist></td><td></td>
 </tr>
 <tr><td>mouseDown</td><td>css=#s2id_event_id a.select2-choice<datalist><option>css=#s2id_event_id a.select2-choice</option><option>id=membership_type_id_1</option><option>name=membership_type_id[1]</option><option>//select[@id='membership_type_id_1']</option><option>//span[@id='mem_type_id']/select[2]</option><option>//select[2]</option><option>css=#membership_type_id_1</option></datalist></td><td></td>
 </tr>
@@ -325,9 +327,9 @@
 <tr><td rowspan="1" colspan="3">Offline Participant, alternate PP</td></tr>
 </thead>
 <tbody>
-<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=participant<datalist><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=member</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=contribute</option><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=109&amp;selectedChild=participant</option></datalist></td><td></td>
+<tr><td>open</td><td>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=participant<datalist><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=member</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=contribute</option><option>http://localhost:8001/civicrm/admin/paymentProcessor?reset=1</option><option>http://localhost:8001/civicrm/contact/view?reset=1&amp;cid=147&amp;selectedChild=participant</option></datalist></td><td></td>
 </tr>
-<tr><td>click</td><td>//form[@id='Search']/div[3]/a[2]<datalist><option>//form[@id='Search']/div[3]/a[2]</option><option>xpath=(//a[contains(@href, '/civicrm/contact/view/participant?reset=1&amp;action=add&amp;cid=109&amp;context=participant&amp;mode=live')])[2]</option><option>//div[3]/a[2]</option></datalist></td><td></td>
+<tr><td>click</td><td>//form[@id='Search']/div[3]/a[2]<datalist><option>//form[@id='Search']/div[3]/a[2]</option><option>xpath=(//a[contains(@href, '/civicrm/contact/view/participant?reset=1&amp;action=add&amp;cid=147&amp;context=participant&amp;mode=live')])[2]</option><option>//div[3]/a[2]</option></datalist></td><td></td>
 </tr>
 <tr><td>mouseDown</td><td>css=#s2id_event_id a.select2-choice<datalist><option>css=#s2id_event_id a.select2-choice</option><option>id=membership_type_id_1</option><option>name=membership_type_id[1]</option><option>//select[@id='membership_type_id_1']</option><option>//span[@id='mem_type_id']/select[2]</option><option>//select[2]</option><option>css=#membership_type_id_1</option></datalist></td><td></td>
 </tr>
@@ -388,8 +390,6 @@
 </thead>
 <tbody>
 <tr><td>open</td><td>http://localhost:8001/civicrm/contribute/transact?reset=1&amp;id=1<datalist><option>http://localhost:8001/civicrm/admin/contribute?reset=1</option><option>http://localhost:8001/civicrm/contribute/transact?reset=1&amp;id=1</option></datalist></td><td></td>
-</tr>
-<tr><td>selectWindow</td><td>win_ser_1<datalist><option>win_ser_1</option></datalist></td><td></td>
 </tr>
 <tr><td>click</td><td>id=credit_card_number<datalist><option>id=credit_card_number</option><option>name=credit_card_number</option><option>//input[@id='credit_card_number']</option><option>//div[@id='payment_information']/fieldset/div/div[2]/div[2]/input</option><option>//fieldset/div/div[2]/div[2]/input</option><option>css=#credit_card_number</option></datalist></td><td></td>
 </tr>
@@ -513,13 +513,13 @@
 </tr>
 <tr><td>uncheck</td><td>id=payment_processor_3<datalist><option>id=payment_processor_3</option><option>id=payment_processor_1</option><option>name=payment_processor[1]</option><option>//input[@id='payment_processor_1']</option><option>//form[@id='Amount']/div[2]/table/tbody/tr[3]/td/input[3]</option><option>//td/input[3]</option><option>css=#payment_processor_1</option></datalist></td><td></td>
 </tr>
+<tr><td>click</td><td>id=is_pay_later<datalist><option>id=is_pay_later</option><option>name=is_pay_later</option><option>//input[@id='is_pay_later']</option><option>//form[@id='Amount']/div[2]/table/tbody/tr[4]/td/input</option><option>//tr[4]/td/input</option><option>css=#is_pay_later</option></datalist></td><td></td>
+</tr>
 <tr><td>check</td><td>id=is_pay_later<datalist><option>id=is_pay_later</option><option>id=payment_processor_1</option><option>name=payment_processor[1]</option><option>//input[@id='payment_processor_1']</option><option>//form[@id='Amount']/div[2]/table/tbody/tr[3]/td/input[3]</option><option>//td/input[3]</option><option>css=#payment_processor_1</option></datalist></td><td></td>
 </tr>
-<tr><td>selectFrame</td><td>index=0<datalist><option>index=0</option></datalist></td><td></td>
+<tr><td>click</td><td>//p<datalist><option>//p</option><option>css=p</option></datalist></td><td></td>
 </tr>
-<tr><td>editContent</td><td>//body<datalist><option>//body</option><option>css=body.cke_editable.cke_editable_themed.cke_contents_ltr.cke_show_borders</option></datalist></td><td>&lt;p&gt;Do something&lt;/p&gt;</td>
-</tr>
-<tr><td>selectFrame</td><td>relative=parent<datalist><option>relative=parent</option></datalist></td><td></td>
+<tr><td>editContent</td><td>//body<datalist><option>//body</option><option>css=body.cke_editable.cke_editable_themed.cke_contents_ltr.cke_show_borders</option></datalist></td><td>&lt;p&gt;Enter check address.&lt;br&gt;&lt;/p&gt;</td>
 </tr>
 <tr><td>click</td><td>id=_qf_Amount_next-top<datalist><option>id=_qf_Amount_next-top</option><option>name=_qf_Amount_next</option><option>//input[@id='_qf_Amount_next-top']</option><option>//form[@id='Amount']/div[2]/div[2]/span/input</option><option>//span/input</option><option>css=#_qf_Amount_next-top</option></datalist></td><td></td>
 </tr>
@@ -597,9 +597,9 @@
 </tr>
 <tr><td>click</td><td>id=ui-id-25<datalist><option>id=ui-id-25</option><option>link=Title</option><option>//a[contains(text(),'Title')]</option><option>//a[@id='ui-id-25']</option><option>//li[@id='tab_settings']/a</option><option>//a[contains(@href, '/civicrm/admin/contribute/settings?reset=1&amp;action=update&amp;id=1')]</option><option>//div[3]/div[2]/div/ul/li/a</option><option>css=#ui-id-25</option></datalist></td><td></td>
 </tr>
-<tr><td>uncheck</td><td>id=is_confirm_enabled<datalist><option>id=is_confirm_enabled</option><option>name=is_confirm_enabled</option><option>//input[@id='is_confirm_enabled']</option><option>//form[@id='Settings']/div[3]/table[3]/tbody/tr/td[2]/input</option><option>//table[3]/tbody/tr/td[2]/input</option><option>css=#is_confirm_enabled</option></datalist></td><td></td>
+<tr><td>uncheck</td><td>id=member_is_active<datalist><option>id=member_is_active</option><option>name=member_is_active</option><option>//input[@id='member_is_active']</option><option>//div[@id='form']/table/tbody/tr/td[2]/input</option><option>//div[2]/table/tbody/tr/td[2]/input</option><option>css=#member_is_active</option></datalist></td><td></td>
 </tr>
-<tr><td>click</td><td>id=_qf_Settings_next-bottom<datalist><option>id=_qf_Settings_next-bottom</option><option>//input[@id='_qf_Settings_next-bottom']</option><option>//form[@id='Settings']/div[3]/div[2]/span/input</option><option>//div[2]/span/input</option><option>css=#_qf_Settings_next-bottom</option></datalist></td><td></td>
+<tr><td>click</td><td>id=_qf_MembershipBlock_submit_savenext-bottom<datalist><option>id=_qf_MembershipBlock_submit_savenext-bottom</option><option>//input[@id='_qf_MembershipBlock_submit_savenext-bottom']</option><option>//div[@id='form']/div[4]/span[3]/input</option><option>//div[4]/span[3]/input</option><option>css=#_qf_MembershipBlock_submit_savenext-bottom</option></datalist></td><td></td>
 </tr>
 </tbody></table>
 <table cellpadding="1" cellspacing="1" border="1">
@@ -672,8 +672,6 @@
 <tr><td>click</td><td>id=edit-civicrm-1-contribution-1-contribution-total-amount<datalist><option>id=edit-civicrm-1-contribution-1-contribution-total-amount</option><option>name=civicrm_1_contribution_1_contribution_total_amount</option><option>//input[@id='edit-civicrm-1-contribution-1-contribution-total-amount']</option><option>//fieldset[@id='contribution']/div/div[2]/input</option><option>//fieldset[7]/div/div[3]/fieldset/div/div[2]/input</option><option>css=#edit-civicrm-1-contribution-1-contribution-total-amount</option></datalist></td><td></td>
 </tr>
 <tr><td>click</td><td>id=edit-submit<datalist><option>id=edit-submit</option><option>//input[@id='edit-submit']</option><option>//form[@id='wf-crm-configure-form']/div/input</option><option>//form/div/input</option><option>css=#edit-submit</option></datalist></td><td></td>
-</tr>
-<tr><td>click</td><td>id=edit-actions-submit<datalist><option>id=edit-actions-submit</option><option>//input[@id='edit-actions-submit']</option><option>//div[@id='edit-actions']/input</option><option>//div[3]/input</option><option>css=#edit-actions-submit</option></datalist></td><td></td>
 </tr>
 </tbody></table>
 <table cellpadding="1" cellspacing="1" border="1">
