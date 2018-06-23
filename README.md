@@ -9,6 +9,10 @@ CiviCRM Stripe Payment Processor
 * CiviCRM 5.0+
 * Stripe API version: Tested on 2018-02-28
 
+#### "Separate Membership Payment"
+If you are using a contribution page with "Separate Membership Payment" enabled you will need to apply this PR:
+https://github.com/civicrm/civicrm-core/pull/12358
+
 ### How to update Stripe API version
 Go to _Account Settings_ -> _API Keys_ tab -> click _Upgrade available_ button.  
 More info on how to change:  https://stripe.com/docs/upgrades#how-can-i-upgrade-my-api  

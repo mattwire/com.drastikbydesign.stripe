@@ -556,12 +556,10 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
           return $stripe_customer;
         }
         // Avoid the 'use same token twice' issue while still using latest card.
-        if (!empty($params['selectMembership'])
-          && $params['selectMembership']
-          && empty($params['contributionPageID'])
-        ) {
-          // This is a Contribution form w/ Membership option and charge is
-          // coming through for the 2nd time.  Don't need to update customer again.
+        if (!empty($params['is_secondary_financial_transaction'])) {
+          // This is a Contribution page with "Separate Membership Payment".
+          // Charge is coming through for the 2nd time.
+          // Don't update customer again or we will get "token_already_used" error from Stripe.
         }
         else {
           $stripe_customer->card = $card_token;
@@ -616,10 +614,7 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
 
     // Prepare the charge array, minus Customer/Card details.
     if (empty($params['description'])) {
-      $params['description'] = ts('CiviCRM backend contribution');
-    }
-    else {
-      $params['description'] = ts('CiviCRM # ') . $params['description'];
+      $params['description'] = ts('Backend contribution');
     }
 
     // Stripe charge.
