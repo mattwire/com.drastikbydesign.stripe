@@ -31,8 +31,6 @@
       var token = response['id'];
       // Update form with the token & submit.
       removeCCDetails($form, false);
-      // We use the credit_card_number field to pass token as this is reliable.
-      // Inserting an input field is unreliable on ajax forms and often gets missed from POST request for some reason.
       $form.find("input#stripe-token").val(token);
 
       // Disable unload event handler
@@ -315,7 +313,7 @@
         exp_month: cc_month,
         exp_year: cc_year
       }, stripeResponseHandler);
-      debugging('Getting Stripe token');
+      debugging('Created Stripe token');
       return false;
     }
   }
