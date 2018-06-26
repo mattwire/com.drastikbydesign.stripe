@@ -340,15 +340,12 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
    * @param $form - reference to the form object
    */
   public function buildForm(&$form) {
-    if ($form->isSubmitted()) return;
-
-    $stripe_ppid = CRM_Utils_Array::value('id', $form->_paymentProcessor);
-    $stripe_key = self::stripe_get_key($stripe_ppid);
-
-    // Set ddi_reference
-    $defaults = array();
-    $defaults['stripe_id'] = $stripe_ppid;
-    $defaults['stripe_pub_key'] = $stripe_key;
+    $paymentProcessorId = CRM_Utils_Array::value('id', $form->_paymentProcessor);
+    $publishableKey = self::stripe_get_key($paymentProcessorId);
+    $defaults = [
+      'stripe_id' => $paymentProcessorId,
+      'stripe_pub_key' => $publishableKey,
+    ];
     $form->setDefaults($defaults);
   }
 
