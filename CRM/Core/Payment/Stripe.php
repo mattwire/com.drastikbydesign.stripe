@@ -11,9 +11,8 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
    * pattern and cache the instance in this variable
    *
    * @var object
-   * @static
    */
-  static private $_singleton = NULL;
+  private static $_singleton = NULL;
 
   /**
    * Mode of operation: live or test.
@@ -40,13 +39,10 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
   /**
    * This function checks to see if we have the right config values.
    *
-   * @return string
+   * @return null|string
    *   The error message if any.
-   *
-   * @public
    */
   public function checkConfig() {
-    $config = CRM_Core_Config::singleton();
     $error = array();
 
     if (empty($this->_paymentProcessor['user_name'])) {
@@ -84,14 +80,15 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
    *
    * @param  $stripeReturn
    *   The return from a call to stripeCatchErrors
+   *
    * @return bool
    *
    */
   public function isErrorReturn($stripeReturn) {
-      if (is_object($stripeReturn) && get_class($stripeReturn) == 'CRM_Core_Error') {
-        return true;
-      }
-      return false;
+    if (is_object($stripeReturn) && get_class($stripeReturn) == 'CRM_Core_Error') {
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**
@@ -99,11 +96,15 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
    *
    * @param string $op
    *   Determine which operation to perform.
+   * @param $stripe_params
    * @param array $params
    *   Parameters to run Stripe calls on.
+   * @param array $ignores
    *
-   * @return varies
+   * @return bool|\CRM_Core_Error|\Stripe\Charge|\Stripe\Customer|\Stripe\Plan
    *   Response from gateway.
+   *
+   * @throws \CiviCRM_API3_Exception
    */
   public function stripeCatchErrors($op = 'create_customer', $stripe_params, $params, $ignores = array()) {
     $error_url = $params['stripe_error_url'];
@@ -206,6 +207,8 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
 
   /**
    * Override CRM_Core_Payment function
+   *
+   * @return array
    */
   public function getPaymentFormFields() {
     return array(
@@ -350,26 +353,33 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
   }
 
   /**
-   * Given a payment processor id, return the pub key.
+   * Given a payment processor id, return the publishable key (password field)
+   *
+   * @param $paymentProcessorId
+   *
+   * @return string
    */
-  public function stripe_get_key($stripe_ppid) {
+  public function stripe_get_key($paymentProcessorId) {
     try {
-      $result = civicrm_api3('PaymentProcessor', 'getvalue', array(
+      $publishableKey = (string) civicrm_api3('PaymentProcessor', 'getvalue', array(
         'return' => "password",
-        'id' => $stripe_ppid,
+        'id' => $paymentProcessorId,
       ));
     }
     catch (CiviCRM_API3_Exception $e) {
-      return NULL;
+      return '';
     }
-    return $result;
+    return $publishableKey;
   }
 
   /**
    * Return the CiviCRM version we're running.
+   *
+   * @return string
+   * @throws \CiviCRM_API3_Exception
    */
   public function get_civi_version() {
-    $version = civicrm_api3('Domain', 'getvalue', array(
+    $version = (string) civicrm_api3('Domain', 'getvalue', array(
       'return' => "version",
       'current_domain' => true,
     ));
@@ -383,10 +393,10 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
    * @param array $params
    *   Assoc array of input parameters for this transaction.
    *
-   * @return array
+   * @return array|\CRM_Core_Error
    *   The result in a nice formatted array (or an error object).
    *
-   * @public
+   * @throws \CiviCRM_API3_Exception
    */
   public function doDirectPayment(&$params) {
     if (array_key_exists('credit_card_number', $params)) {
@@ -686,7 +696,7 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
    * @return array
    *   The result in a nice formatted array (or an error object).
    *
-   * @public
+   * @throws \CiviCRM_API3_Exception
    */
   public function doRecurPayment(&$params, $amount, $stripe_customer) {
     // Get recurring contrib properties.
@@ -895,8 +905,6 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
    *
    * @return void
    *
-   * @access public
-   *
    */
   public function doTransferCheckout(&$params, $component) {
     self::doDirectPayment($params);
@@ -922,9 +930,10 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
 
   /**
    * Process incoming notification.
+   *
+   * @throws \CRM_Core_Exception
    */
-
-  static public function handlePaymentNotification() {
+  public static function handlePaymentNotification() {
     $data_raw = file_get_contents("php://input");
     $data = json_decode($data_raw);
     $ipnClass = new CRM_Core_Payment_StripeIPN($data);
