@@ -365,20 +365,6 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
   }
 
   /**
-   * Return the CiviCRM version we're running.
-   *
-   * @return string
-   * @throws \CiviCRM_API3_Exception
-   */
-  public function get_civi_version() {
-    $version = (string) civicrm_api3('Domain', 'getvalue', array(
-      'return' => "version",
-      'current_domain' => true,
-    ));
-    return $version;
-  }
-
-  /**
    * Submit a payment using Stripe's PHP API:
    * https://stripe.com/docs/api?lang=php
    *
