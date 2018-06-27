@@ -224,7 +224,6 @@ function stripe_civicrm_alterContent( &$content, $context, $tplName, &$object ) 
       $stripeJSURL = CRM_Core_Resources::singleton()
         ->getUrl('com.drastikbydesign.stripe', 'js/civicrm_stripe.js');
       $content .= "<script src='{$stripeJSURL}'></script>";
-      $content .= "<script src='https://js.stripe.com/v2/'></script>";
       $_stripe_scripts_added = TRUE;
     }
   }
@@ -239,10 +238,12 @@ function stripe_civicrm_alterContent( &$content, $context, $tplName, &$object ) 
  */
 function stripe_civicrm_buildForm($formName, &$form) {
   global $_stripe_scripts_added;
-  if (!empty($form->_paymentProcessor['class_name'])) {
+  if (!isset($form->_paymentProcessor)) {
+    return;
+  }
+  $paymentProcessor = $form->_paymentProcessor;
+  if (!empty($paymentProcessor['class_name'])) {
     if (!$_stripe_scripts_added) {
-      CRM_Core_Resources::singleton()
-        ->addScriptUrl('https://js.stripe.com/v2/', 10, 'page-body');
       CRM_Core_Resources::singleton()
         ->addScriptFile('com.drastikbydesign.stripe', 'js/civicrm_stripe.js');
     }

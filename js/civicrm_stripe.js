@@ -64,7 +64,6 @@
        || (settings.url.match("/civicrm/contact/view/participant?"))) {
       // See if there is a payment processor selector on this form
       // (e.g. an offline credit card contribution page).
-      debugger;
       if ($('#payment_processor_id').length > 0) {
         // There is. Check if the selected payment processor is different
         // from the one we think we should be using.
@@ -82,14 +81,12 @@
             // Now, see if the new payment processor id is a stripe
             // payment processor.
             var stripe_pp_type_id = result['result'];
-            debugger;
             CRM.api3('PaymentProcessor', 'getvalue', {
               "return": "password",
               "id": ppid,
               "payment_processor_type_id": stripe_pp_type_id,
             }).done(function(result) {
               var pub_key = result['result'];
-              debugger;
               if (pub_key) {
                 // It is a stripe payment processor, so update the key.
                 debugging("Setting new stripe key to: " + pub_key);
@@ -110,10 +107,13 @@
   });
 
   function loadStripeBillingBlock() {
+    // On Wordpress elements get added twice, once as hidden elements with no ID and then again with the payment fields with an ID and name but no value.
+    // We remove any that have an ID set as we don't want them.
     $('[id=stripe_pub_key]').remove();
     $('[id=stripe_id]').remove();
     $('[id=stripe_token]').remove();
 
+    // Setup Stripe.Js
     var $stripePubKey = $('[name=stripe_pub_key]');
     if ($stripePubKey.length) {
       if (!$().Stripe) {

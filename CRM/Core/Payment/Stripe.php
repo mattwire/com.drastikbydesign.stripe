@@ -330,7 +330,7 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
 
   /**
    * Set default values when loading the (payment) form
-   * 
+   *
    * @param \CRM_Core_Form $form
    */
   public function buildForm(&$form) {
