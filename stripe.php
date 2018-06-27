@@ -233,8 +233,9 @@ function stripe_civicrm_alterContent( &$content, $context, $tplName, &$object ) 
 /**
  * Add stripe.js to forms, to generate stripe token
  * hook_civicrm_alterContent is not called for all forms (eg. CRM_Contribute_Form_Contribution on backend)
- * @param $formName
- * @param $form
+ *
+ * @param string $formName
+ * @param CRM_Core_Form $form
  */
 function stripe_civicrm_buildForm($formName, &$form) {
   global $_stripe_scripts_added;

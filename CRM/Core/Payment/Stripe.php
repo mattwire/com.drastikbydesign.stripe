@@ -238,11 +238,11 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
         'name' => 'credit_card_number',
         'title' => ts('Card Number'),
         'cc_field' => TRUE,
-        'attributes' => array(
+        'attributes' => [
           'size' => 20,
           'maxlength' => 20,
           'autocomplete' => 'off',
-        ),
+        ],
         'is_required' => TRUE,
       ),
       'cvv2' => array(
@@ -250,11 +250,11 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
         'name' => 'cvv2',
         'title' => ts('Security Code'),
         'cc_field' => TRUE,
-        'attributes' => array(
+        'attributes' => [
           'size' => 5,
           'maxlength' => 10,
           'autocomplete' => 'off',
-        ),
+        ],
         'is_required' => TRUE,
       ),
       'credit_card_exp_date' => array(
@@ -280,31 +280,25 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
         'htmlType' => 'hidden',
         'name' => 'stripe_token',
         'title' => 'Stripe Token',
-        'attributes' => array(
-          'id' => 'stripe-token',
-        ),
-        'cc_field' => TRUE,
+        'cc_field' => FALSE,
+        'attributes' => [],
         'is_required' => TRUE,
       ),
       'stripe_id' => array(
         'htmlType' => 'hidden',
         'name' => 'stripe_id',
         'title' => 'Stripe ID',
-        'attributes' => array(
-          'id' => 'stripe-id',
-        ),
         'cc_field' => TRUE,
-        'is_required' => TRUE,
+        'attributes' => [],
+        'is_required' => FALSE,
       ),
       'stripe_pub_key' => array(
         'htmlType' => 'hidden',
         'name' => 'stripe_pub_key',
         'title' => 'Stripe Public Key',
-        'attributes' => array(
-          'id' => 'stripe-pub-key',
-        ),
         'cc_field' => TRUE,
-        'is_required' => TRUE,
+        'attributes' => [],
+        'is_required' => FALSE,
       ),
     );
   }
@@ -335,13 +329,14 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
   }
 
   /**
-   * Implementation of hook_civicrm_buildForm().
-   *
-   * @param $form - reference to the form object
+   * Set default values when loading the (payment) form
+   * 
+   * @param \CRM_Core_Form $form
    */
   public function buildForm(&$form) {
+    // Set default values
     $paymentProcessorId = CRM_Utils_Array::value('id', $form->_paymentProcessor);
-    $publishableKey = self::stripe_get_key($paymentProcessorId);
+    $publishableKey = CRM_Core_Payment_Stripe::getPublishableKey($paymentProcessorId);
     $defaults = [
       'stripe_id' => $paymentProcessorId,
       'stripe_pub_key' => $publishableKey,
@@ -349,14 +344,14 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
     $form->setDefaults($defaults);
   }
 
-  /**
+   /**
    * Given a payment processor id, return the publishable key (password field)
    *
    * @param $paymentProcessorId
    *
    * @return string
    */
-  public function stripe_get_key($paymentProcessorId) {
+  public static function getPublishableKey($paymentProcessorId) {
     try {
       $publishableKey = (string) civicrm_api3('PaymentProcessor', 'getvalue', array(
         'return' => "password",
@@ -936,5 +931,6 @@ class CRM_Core_Payment_Stripe extends CRM_Core_Payment {
     $ipnClass = new CRM_Core_Payment_StripeIPN($data);
     $ipnClass->main();
   }
+
 }
 
