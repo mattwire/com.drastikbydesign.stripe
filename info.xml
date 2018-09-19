@@ -18,6 +18,9 @@
   <compatibility>
     <ver>5.0</ver>
   </compatibility>
+  <requires>
+    <ext>org.civicrm.paymentlib</ext>
+  </requires>
   <civix>
     <namespace>CRM/Stripe</namespace>
   </civix>

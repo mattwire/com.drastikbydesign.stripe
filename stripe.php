@@ -25,41 +25,6 @@ function stripe_civicrm_xmlMenu(&$files) {
  * Implementation of hook_civicrm_install().
  */
 function stripe_civicrm_install() {
-  // Create required tables for Stripe.
-  require_once "CRM/Core/DAO.php";
-  CRM_Core_DAO::executeQuery("
-  CREATE TABLE IF NOT EXISTS `civicrm_stripe_customers` (
-    `email` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `id` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `is_live` tinyint(4) NOT NULL COMMENT 'Whether this is a live or test transaction',
-    `processor_id` int(10) DEFAULT NULL COMMENT 'ID from civicrm_payment_processor',
-    UNIQUE KEY `id` (`id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-  ");
-
-  CRM_Core_DAO::executeQuery("
-  CREATE TABLE IF NOT EXISTS `civicrm_stripe_plans` (
-    `plan_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-    `is_live` tinyint(4) NOT NULL COMMENT 'Whether this is a live or test transaction',
-    `processor_id` int(10) DEFAULT NULL COMMENT 'ID from civicrm_payment_processor',
-    UNIQUE KEY `plan_id` (`plan_id`)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-  ");
-
-  CRM_Core_DAO::executeQuery("
-  CREATE TABLE IF NOT EXISTS `civicrm_stripe_subscriptions` (
-    `subscription_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-    `customer_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
-    `contribution_recur_id` INT(10) UNSIGNED NULL DEFAULT NULL,
-    `end_time` int(11) NOT NULL DEFAULT '0',
-    `is_live` tinyint(4) NOT NULL COMMENT 'Whether this is a live or test transaction',
-    `processor_id` int(10) DEFAULT NULL COMMENT 'ID from civicrm_payment_processor',
-    KEY `end_time` (`end_time`), PRIMARY KEY `subscription_id` (`subscription_id`),
-    CONSTRAINT `FK_civicrm_stripe_contribution_recur_id` FOREIGN KEY (`contribution_recur_id`) 
-    REFERENCES `civicrm_contribution_recur`(`id`) ON DELETE SET NULL ON UPDATE RESTRICT 
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-  ");
-
   _stripe_civix_civicrm_install();
 }
 
@@ -67,12 +32,6 @@ function stripe_civicrm_install() {
  * Implementation of hook_civicrm_uninstall().
  */
 function stripe_civicrm_uninstall() {
-  // Remove Stripe tables on uninstall.
-  require_once "CRM/Core/DAO.php";
-  CRM_Core_DAO::executeQuery("DROP TABLE civicrm_stripe_customers");
-  CRM_Core_DAO::executeQuery("DROP TABLE civicrm_stripe_plans");
-  CRM_Core_DAO::executeQuery("DROP TABLE civicrm_stripe_subscriptions");
-
   _stripe_civix_civicrm_uninstall();
 }
 

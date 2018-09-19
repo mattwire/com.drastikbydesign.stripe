@@ -11,18 +11,6 @@ class CRM_Stripe_Upgrader extends CRM_Stripe_Upgrader_Base {
   // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
 
   /**
-   * Standard: run an install sql script
-   */
-  public function install() {
-  }
-
-  /**
-   * Standard: run an uninstall script
-   */
-  public function uninstall() {
-  }
-
-  /**
    * Add is_live column to civicrm_stripe_plans and civicrm_stripe_customers tables.
    *
    * @return TRUE on success
@@ -379,4 +367,21 @@ class CRM_Stripe_Upgrader extends CRM_Stripe_Upgrader_Base {
     }
     return TRUE;
   }
+
+  public function upgrade_5010() {
+    $this->ctx->log->info('Applying Stripe update 5010.  Adding contact_id to civicrm_stripe_customers.');
+    if (!CRM_Core_BAO_SchemaHandler::checkIfFieldExists('civicrm_stripe_customers', 'contact_id', FALSE)) {
+      CRM_Core_DAO::executeQuery('ALTER TABLE `civicrm_stripe_customers` 
+       ADD COLUMN `contact_id` int(10) UNSIGNED DEFAULT NULL COMMENT "FK ID from civicrm_contact"');
+      CRM_Core_DAO::executeQuery('ALTER TABLE `civicrm_stripe_customers` 
+       ADD CONSTRAINT `FK_civicrm_stripe_customers_contact_id` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`) ON DELETE CASCADE;');
+      CRM_Core_DAO::executeQuery('ALTER TABLE `civicrm_stripe_customers` ADD UNIQUE (contact_id)');
+    }
+
+    $this->ctx->log->info('Applying Stripe update 5010. Getting Contact IDs for civicrm_stripe_customers.');
+    civicrm_api3('Stripe', 'customercontactids', []);
+
+    return TRUE;
+  }
+
 }
