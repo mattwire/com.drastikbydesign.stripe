@@ -12,9 +12,9 @@
     <author>Joshua Walker (drastik) - Drastik by Design</author>
     <email>admin@drastikbydesign.com</email>
   </maintainer>
-  <releaseDate>2018-08-16</releaseDate>
-  <version>5.0.beta4</version>
-  <develStage>beta</develStage>
+  <releaseDate>2018-09-19</releaseDate>
+  <version>5.1.alpha1</version>
+  <develStage>alpha</develStage>
   <compatibility>
     <ver>5.0</ver>
   </compatibility>
