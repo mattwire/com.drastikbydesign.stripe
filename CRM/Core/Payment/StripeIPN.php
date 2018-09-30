@@ -4,53 +4,62 @@
  * Handle Stripe Webhooks for recurring payments.
  */
 
-require_once 'CRM/Core/Page.php';
-
 class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
-  var $ppid = NULL;
-  var $secret_key = NULL;
-  var $is_email_receipt = 1;
+
+  // TODO: These vars should probably be protected, not public - but need to check them all first
+  public $ppid = NULL;
+  public $secret_key = NULL;
+  public $is_email_receipt = 1;
+
   // By default, always retrieve the event from stripe to ensure we are
   // not being fed garbage. However, allow an override so when we are 
   // testing, we can properly test a failed recurring contribution.
-  var $verify_event = TRUE;
+  public $verify_event = TRUE;
 
   // Properties of the event.
-  var $test_mode;
-  var $event_type = NULL;
-  var $subscription_id = NULL;
-  var $charge_id = NULL;
-  var $previous_plan_id = NULL;
-  var $plan_id = NULL;
-  var $plan_amount = NULL;
-  var $frequency_interval = NULL;
-  var $frequency_unit = NULL;
-  var $plan_name = NULL;
-  var $plan_start = NULL;
+  public $test_mode;
+  public $event_type = NULL;
+  public $subscription_id = NULL;
+  public $charge_id = NULL;
+  public $previous_plan_id = NULL;
+  public $plan_id = NULL;
+  public $plan_amount = NULL;
+  public $frequency_interval = NULL;
+  public $frequency_unit = NULL;
+  public $plan_name = NULL;
+  public $plan_start = NULL;
        
   // Derived properties.
-  var $contact_id = NULL;
-  var $contribution_recur_id = NULL;
-  var $membership_id = NULL;
-  var $event_id = NULL;
-  var $invoice_id = NULL;
-  var $receive_date = NULL;
-  var $amount = NULL;
-  var $fee = NULL;
-  var $net_amount = NULL;
-  var $previous_contribution_id = NULL;
-  var $previous_contribution_status_id = NULL;
-  var $previous_contribution_total_amount = NULL;
-  var $previous_completed_contribution_id = NULL;
+  public $contact_id = NULL;
+  public $contribution_recur_id = NULL;
+  public $membership_id = NULL;
+  public $event_id = NULL;
+  public $invoice_id = NULL;
+  public $receive_date = NULL;
+  public $amount = NULL;
+  public $fee = NULL;
+  public $net_amount = NULL;
+  public $previous_contribution_id = NULL;
+  public $previous_contribution_status_id = NULL;
+  public $previous_contribution_total_amount = NULL;
+  public $previous_completed_contribution_id = NULL;
 
+  /**
+   * CRM_Core_Payment_StripeIPN constructor.
+   *
+   * @param $inputData
+   * @param bool $verify
+   *
+   * @throws \CRM_Core_Exception
+   */
   public function __construct($inputData, $verify = TRUE) {
     $this->verify_event = $verify;
     $this->setInputParameters($inputData);
     parent::__construct();
   }
+
   /**
    * Store input array on the class.
-   *
    * We override base because our input parameter is an object
    *
    * @param array $parameters
@@ -91,17 +100,18 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
       $this->_inputParameters = $parameters;
     }
   }
+
   /**
-    * 
-    * Get a parameter given to us by Stripe.
-    * @param string $name
-    * @param $type
-    * @param bool $abort
-    *
-    * @return mixed
+   * Get a parameter given to us by Stripe.
+   *
+   * @param string $name
+   * @param $type
+   * @param bool $abort
+   *
+   * @return false|int|null|string
+   * @throws \CRM_Core_Exception
    */
   public function retrieve($name, $type, $abort = TRUE) {
-
     $class_name = get_class($this->_inputParameters->data->object);
     $value = NULL;
     switch ($name) {
@@ -180,9 +190,16 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
     return $value;
   }
 
-  function main() {
+  /**
+   * @return bool
+   * @throws \CRM_Core_Exception
+   * @throws \CiviCRM_API3_Exception
+   */
+  public function main() {
     // Collect and determine all data about this event.
     $this->setInfo();
+
+    $pendingStatusId = CRM_Core_PseudoConstant::getKey('CRM_Contribute_BAO_Contribution', 'contribution_status_id', 'Pending');
 
     switch($this->event_type) {
       // Successful recurring payment.
@@ -192,10 +209,9 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
         // new recurring contribution).
         if ($this->previous_contribution_total_amount != $this->amount) {
           throw new CRM_Core_Exception("Subscription amount mismatch. I have " . $this->amount . " and I expect " . $this->previous_contribution_total_amount . ".");
-          return FALSE;
         }
 
-        if ($this->previous_contribution_status_id == 2) {
+        if ($this->previous_contribution_status_id == $pendingStatusId) {
           // Update the contribution to include the fee.
           civicrm_api3('Contribution', 'create', array(
             'id' => $this->previous_contribution_id,
@@ -204,8 +220,7 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
             'net_amount' => $this->net_amount,
           ));
           // The last one was not completed, so complete it.
-          $result = civicrm_api3('Contribution', 'completetransaction', array(
-            'sequential' => 1,
+          civicrm_api3('Contribution', 'completetransaction', array(
             'id' => $this->previous_contribution_id,
             'trxn_date' => $this->receive_date,
             'trxn_id' => $this->charge_id,
@@ -215,13 +230,13 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
             'payment_processor_id' => $this->ppid,
             'is_email_receipt' => $this->is_email_receipt,
            ));
-        } else {
+        }
+        else {
           // The first contribution was completed, so create a new one.
           
           // api contribution repeattransaction repeats the appropriate contribution if it is given
-          // simply the recurring contribution id. It also updates the membership for us. 
-
-          $result = civicrm_api3('Contribution', 'repeattransaction', array(
+          // simply the recurring contribution id. It also updates the membership for us.
+          civicrm_api3('Contribution', 'repeattransaction', array(
             // Actually, don't use contribution_recur_id until CRM-19945 patches make it in to 4.6/4.7
             // and we have a way to require a minimum minor CiviCRM version.
             //'contribution_recur_id' => $this->recurring_info->id,
@@ -247,8 +262,7 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
         }
 
         // Successful charge & more to come. 
-        $result = civicrm_api3('ContributionRecur', 'create', array(
-          'sequential' => 1,
+        civicrm_api3('ContributionRecur', 'create', array(
           'id' => $this->contribution_recur_id,
           'failure_count' => 0,
           'contribution_status_id' => "In Progress"
@@ -260,9 +274,9 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
       case 'invoice.payment_failed':
         $fail_date = date("Y-m-d H:i:s");
 
-        if ($this->previous_contribution_status_id == 2) {
+        if ($this->previous_contribution_status_id == $pendingStatusId) {
           // If this contribution is Pending, set it to Failed.
-          $result = civicrm_api3('Contribution', 'create', array(
+          civicrm_api3('Contribution', 'create', array(
             'id' => $this->previous_contribution_id,
             'contribution_status_id' => "Failed",
             'receive_date' => $fail_date,
@@ -289,9 +303,8 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
         ));
         $failure_count++;
 
-        //  Change the status of the Recurring and update failed attempts.
-        $result = civicrm_api3('ContributionRecur', 'create', array(
-          'sequential' => 1,
+        // Change the status of the Recurring and update failed attempts.
+        civicrm_api3('ContributionRecur', 'create', array(
           'id' => $this->contribution_recur_id,
           'contribution_status_id' => "Failed",
           'failure_count' => $failure_count,
@@ -300,14 +313,14 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
 
         return TRUE;
 
-      //Subscription is cancelled
+      // Subscription is cancelled
       case 'customer.subscription.deleted':
-        //Cancel the recurring contribution
-        $result = civicrm_api3('ContributionRecur', 'cancel', array(
+        // Cancel the recurring contribution
+        civicrm_api3('ContributionRecur', 'cancel', array(
           'id' => $this->contribution_recur_id,
         ));
 
-        //Delete the record from Stripe's subscriptions table
+        // Delete the record from Stripe's subscriptions table
         $query_params = array(
           1 => array($this->subscription_id, 'String'),
         );
@@ -331,22 +344,19 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
        
        $new_civi_invoice = md5(uniqid(rand(), TRUE));
 
-       if ($this->previous_contribution_status_id == 2) {
+       if ($this->previous_contribution_status_id == $pendingStatusId) {
          // Cancel the pending contribution.
-         $result = civicrm_api3('Contribution', 'delete', array(
-           'sequential' => 1,
+         civicrm_api3('Contribution', 'delete', array(
            'id' => $this->previous_contribution_id,
          ));
        }
 
        // Cancel the old recurring contribution.
-       $result = civicrm_api3('ContributionRecur', 'cancel', array(
-         'sequential' => 1,
+       civicrm_api3('ContributionRecur', 'cancel', array(
          'id' => $this->contribution_recur_id
        ));
 
        $new_contribution_recur = civicrm_api3('ContributionRecur', 'create', array(
-          'sequential' => 1,
           'contact_id' => $this->contact_id,
           'invoice_id' => $new_civi_invoice,
           'amount' => $this->plan_amount,
@@ -399,8 +409,7 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
 
           // Adjust to the new membership level.
           if (!empty($new_membership_type_id)) {
-            $result = civicrm_api3('Membership', 'create', array(
-              'sequential' => 1,
+            civicrm_api3('Membership', 'create', array(
               'id' => $this->membership_id,
               'membership_type_id' => $new_membership_type_id,
               'contribution_recur_id' => $new_contribution_recur_id,
@@ -408,8 +417,7 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
             ));
 
             // Create a new membership payment record.
-            $result = civicrm_api3('MembershipPayment', 'create', array(
-              'sequential' => 1,
+            civicrm_api3('MembershipPayment', 'create', array(
               'membership_id' => $this->membership_id,
               'contribution_id' => $new_contribution_id,
             ));
@@ -440,9 +448,11 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
    * Given the data passed to us via the Stripe Event, try to determine
    * as much as we can about this event and set that information as 
    * properties to be used later.
+   *
+   * @throws \CRM_Core_Exception
+   * @throws \CiviCRM_API3_Exception
    */
-  function setInfo() {
-
+  public function setInfo() {
     $this->event_type = $this->retrieve('event_type', 'String');
     $this->test_mode = $this->retrieve('test_mode', 'Integer');
 
@@ -570,8 +580,8 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
         if ($membership['count'] == 1) {
           $this->membership_id = $membership['id'];
         }
-
       }
     }
   }
+
 }
