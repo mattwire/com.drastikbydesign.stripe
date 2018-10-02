@@ -68,7 +68,7 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
   */
   public function setInputParameters($parameters) {
     if (empty($parameters) || !is_object($parameters) || empty($parameters->id)) {
-      throw new CRM_Core_Exception('Invalid input parameters. Should be an object with an id parameter.');
+      $this->exception('Invalid input parameters. Should be an object with an id parameter');
     }
 
     // Determine the proper Stripe Processor ID so we can get the secret key
@@ -76,7 +76,7 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
     
     // The $_GET['processor_id'] value is set by CRM_Core_Payment::handlePaymentMethod.
     if (!array_key_exists('processor_id', $_GET) || empty($_GET['processor_id'])) {
-      throw new CRM_Core_Exception('Cannot determine processor id.');
+      $this->exception('Cannot determine processor id.');
     }
     $this->ppid = $_GET['processor_id'];
 
@@ -86,7 +86,7 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
       $this->secret_key = civicrm_api3('PaymentProcessor', 'getvalue', $params);
     }
     catch(Exception $e) {
-      throw new CRM_Core_Exception('Failed to get Stripe secret key.');
+      $this->exception('Failed to get Stripe secret key');
     }
 
     // Now re-retrieve the data from Stripe to ensure it's legit.
@@ -185,7 +185,8 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
     }
     $value = CRM_Utils_Type::validate($value, $type, FALSE);
     if ($abort && $value === NULL) {
-      throw new CRM_Core_Exception("Could not find an entry for '$name'.");
+      echo "Failure: Missing Parameter<p>" . CRM_Utils_Type::escape($name, 'String');
+      $this->exception("Could not find an entry for $name");
     }
     return $value;
   }
@@ -208,7 +209,7 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
         // If it's not a match, something is wrong (since when we update a plan, we generate a whole
         // new recurring contribution).
         if ($this->previous_contribution_total_amount != $this->amount) {
-          throw new CRM_Core_Exception("Subscription amount mismatch. I have " . $this->amount . " and I expect " . $this->previous_contribution_total_amount . ".");
+          $this->exception("Subscription amount mismatch. I have " . $this->amount . " and I expect " . $this->previous_contribution_total_amount);
         }
 
         if ($this->previous_contribution_status_id == $pendingStatusId) {
@@ -488,7 +489,7 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
         }
       }
       catch(Exception $e) {
-        throw new CRM_Core_Exception('Cannot get contribution amounts from Stripe.');
+        $this->exception('Cannot get contribution amounts');
       }
     } else {
       // The customer had a credit on their subscription from a downgrade or gift card.
@@ -538,7 +539,7 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
           // This is an unrecoverable error - without a contribution_recur record
           // there is nothing we can do with an invoice.payment_succeeded
           // event.
-          throw new CRM_Core_Exception('I cannot find contribution_recur record for subscription: ' . $this->subscription_id);
+          $this->exception('I cannot find contribution_recur record for subscription: ' . $this->subscription_id);
         }
       }
 
@@ -584,4 +585,8 @@ class CRM_Core_Payment_StripeIPN extends CRM_Core_Payment_BaseIPN {
     }
   }
 
+  public function exception($message) {
+    Civi::log()->debug("StripeIPN: $message");
+    throw new CRM_Core_Exception("StripeIPN: $message");
+  }
 }
